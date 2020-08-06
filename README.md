@@ -1,23 +1,4 @@
-<p align="center">
-  <a href="https://minimal-blog.lekoarts.de">
-    <img alt="LekoArts" src="https://img.lekoarts.de/gatsby/gatsby-site-illustration.png" />
-  </a>
-</p>
-<h1 align="center">
-  Gatsby Starter: Minimal Blog
-</h1>
-
-<p align="center">
-  <a href="https://github.com/LekoArts/gatsby-starter-minimal-blog/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Minimal Blog is released under the MIT license." />
-  </a>
-  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" />
-  <a href="https://twitter.com/intent/follow?screen_name=lekoarts_de">
-    <img src="https://img.shields.io/twitter/follow/lekoarts_de.svg?label=Follow%20@lekoarts_de" alt="Follow @lekoarts_de" />
-  </a>
-</p>
-
-Typography driven, feature-rich blogging theme with minimal aesthetics. Includes tags/categories support and extensive features for code blocks such as live preview, line numbers, and line highlighting. Using the Gatsby Theme [`@lekoarts/gatsby-theme-minimal-blog`](https://github.com/LekoArts/gatsby-themes/tree/master/themes/gatsby-theme-minimal-blog).
+Typography driven, feature-rich blogging theme with minimal aesthetics. Includes tags/categories support and extensive features for code blocks such as live preview, line numbers, and line highlighting.
 
 [**Demo Website**](https://minimal-blog.lekoarts.de)
 
@@ -38,20 +19,20 @@ Also be sure to checkout other [Free & Open Source Gatsby Themes](https://themes
 
 ## 🚀 Getting Started
 
-1. **Create a Gatsby site.**
+1. **Get the repository**
 
-Use the Gatsby CLI to create a new site, specifying this project
+Clone the repository from GitHub
 
 ```sh
-gatsby new project-name https://github.com/LekoArts/gatsby-starter-minimal-blog
+git clone https://github.com/gkalmoukis/blog.git
 ```
 
 2. **Start developing.**
 
-Navigate into your new site's directory and start it up.
+Navigate into your new repository directory and start it up.
 
 ```sh
-cd project-name
+cd blog
 gatsby develop
 ```
 
@@ -59,15 +40,11 @@ gatsby develop
 
 Your site is now running at `http://localhost:8000`!
 
-If you want to learn more about how you can use a Gatsby starter that is configured with a Gatsby theme, you can checkout this [shorter](https://www.gatsbyjs.org/docs/themes/using-a-gatsby-theme/) or [longer](https://www.gatsbyjs.org/tutorial/using-a-theme/) tutorial. The tutorials don't exactly apply to this starter however the concepts are the same.
+If you want to learn more about how you can use a Gatsby starter that is configured with a Gatsby theme, you can checkout this [shorter](https://www.gatsbyjs.org/docs/themes/using-a-gatsby-theme/) or [longer](https://www.gatsbyjs.org/tutorial/using-a-theme/) tutorial. The tutorials don't exactly apply to this repo however the concepts are the same.
 
 ## 📝 Using and modifying this starter
 
 **Important Note:** Please read the guide [Shadowing in Gatsby Themes](https://www.gatsbyjs.org/docs/themes/shadowing/) to understand how to customize the underlying theme!
-
-This starter creates a new Gatsby site that installs and configures the theme [`@lekoarts/gatsby-theme-minimal-blog`](https://github.com/LekoArts/gatsby-themes/tree/master/themes/gatsby-theme-minimal-blog).
-
-Have a look at the theme's README and files to see what options are available and how you can shadow the various components including Theme UI. Generally speaking you will want to place your files into `src/@lekoarts/gatsby-theme-minimal-blog/` to shadow/override files. The Theme UI config can be configured by shadowing its files in `src/gatsby-plugin-theme-ui/`.
 
 ### Code Highlighting
 
