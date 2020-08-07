@@ -6,12 +6,12 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE
 
 module.exports = {
   siteMetadata: {
-    siteTitle: `Geradinesmew`,
-    siteTitleAlt: `Geradinesmew | Blog`,
-    siteHeadline: `Geradinesmew | Blog`,
-    siteUrl: `https://geradinesmew.gkalmoukis.com`,
-    siteDescription: `γατα ειμαι παρατα με`,
-    siteLanguage: `el`,
+    siteTitle: `Giorgos Kalmoukis`,
+    siteTitleAlt: `Giorgos Kalmoukis`,
+    siteHeadline: `Giorgos Kalmoukis`,
+    siteUrl: `https://blog.gkalmoukis.com`,
+    siteDescription: `I’ve created this blog to share some articles for problems I’m having in my work and occasionally some tutorials add it to your android home screen and you will be able to read without internet connection.`,
+    siteLanguage: `en`,
     siteImage: `.static/banner.jpg`,
     author: `@gkalmoukis`
   },
@@ -32,12 +32,12 @@ module.exports = {
         ],
         externalLinks: [
           {
-            name: `Twitter`,
-            url: `https://twitter.com/`,
+            name: `GitHub`,
+            url: `https://github.com/gkalmoukis`,
           },
           {
-            name: `Instagram`,
-            url: `https://www.instagram.com/`,
+            name: `Linkedin`,
+            url: `https://www.linkedin.com/in/giokalm/`,
           },
         ],
       },
@@ -52,9 +52,9 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Geradinesmew - Another meow in the wall.`,
-        short_name: `geradinesmew-blog`,
-        description: `γατα ειμαι παρατα με`,
+        name: `Giorgos Kalmoukis Blog`,
+        short_name: `blog-gkalmoukis`,
+        description: `I’ve created this blog to share some articles for problems I’m having in my work and occasionally some tutorials add it to your android home screen and you will be able to read without internet connection.`,
         start_url: `/`,
         background_color: `#fff`,
         theme_color: `#6B46C1`,
