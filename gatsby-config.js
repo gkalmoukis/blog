@@ -7,10 +7,10 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE
 module.exports = {
   siteMetadata: {
     siteTitle: `Giorgos Kalmoukis`,
-    siteTitleAlt: `Giorgos Kalmoukis`,
-    siteHeadline: `Giorgos Kalmoukis`,
+    siteTitleAlt: `Personal blog of Giorgos Kalmoukis`,
+    siteHeadline: `Personal blog of Giorgos Kalmoukis`,
     siteUrl: `https://blog.gkalmoukis.com`,
-    siteDescription: `I’ve created this blog to share some articles for problems I’m having in my work and occasionally some tutorials add it to your android home screen and you will be able to read without internet connection.`,
+    siteDescription: `I'm working as Software Engineer. I admire collaboration, problem solving , open processes and those who gets things done.`,
     siteLanguage: `en`,
     siteImage: `.static/banner.jpg`,
     author: `@gkalmoukis`
@@ -54,7 +54,7 @@ module.exports = {
       options: {
         name: `Giorgos Kalmoukis Blog`,
         short_name: `blog-gkalmoukis`,
-        description: `I’ve created this blog to share some articles for problems I’m having in my work and occasionally some tutorials add it to your android home screen and you will be able to read without internet connection.`,
+        description: `I'm working as Software Engineer. I admire collaboration, problem solving , open processes and those who gets things done.`,
         start_url: `/`,
         background_color: `#fff`,
         theme_color: `#6B46C1`,
