@@ -21,20 +21,13 @@ const Footer = () => {
       }}
     >
       <div>
-        &copy; {new Date().getFullYear()} - {siteTitle}. All rights reserved.
+      {new Date().getFullYear()} &copy;  All rights reserved.
       </div>
       <div>
-        <Link
-          aria-label="Link to the theme's GitHub repository"
-          href="https://github.com/LekoArts/gatsby-themes/tree/master/themes/gatsby-theme-minimal-blog"
-        >
-          Blog
-        </Link>
+       Created by
         {` `}
-        by
-        {` `}
-        <Link aria-label="Link to the repository author's website" href="https://www.github.com/gkalmoukis">
-          Giorgos Kalmoukis
+        <Link aria-label="Link to the author's website" href="https://gkalmoukis.com">
+        {siteTitle}
         </Link>
       </div>
     </footer>
