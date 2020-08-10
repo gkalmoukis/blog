@@ -1,0 +1,701 @@
+---
+title: REST API με Laravel Framework 
+date: 2020-08-09
+tags: 
+  - Ελληνικά 
+  - Tutorial
+  - API
+  - Laravel
+slug: "/rest-api-me-laravel"
+---
+
+### Τι χρειαζόμαστε;
+
+Βασικές γνώσεις προγραμματισμού με PHP και Laravel Framework.
+Θα χρειαστούμε να έχουμε εγκατεστημένο το [Composer](https://getcomposer.org/doc/00-intro.md) για την διαχείριση των εξαρτήσεων (dependencies). Και τέλος, προεραιτικά το [Postman](https://www.postman.com/) για να δοκιμάζουμε το API κατα την διαδικασία.
+
+### Τι φτιάχνουμε;
+
+Για τους σκοπούς του μαθήματος θα αναπτύξουμε ένα API που θα χρησιμοποιείται για να φτιάχνει μια λίστα από προϊόντα περιποίησης . 
+Για κάθε προϊόν θα χρειαστούμε τα παρακάτω στοιχεία.
+
+| Στοιχείο | Τύπος |
+| :---: | :---: |
+|brand|string|
+|name|string|
+|type|string|
+|description|text|
+|barcode|integer|
+|is_vegan|boolean|
+
+Για να ασφαλίσουμε το API, θα χρησιμοποιησουμε το [Laravel Passport](https://laravel.com/docs/master/passport) με το οποίο θα παράγουμε access tokens για την αυθεντικοποίηση (authentication) κάθε χρήστη του API, με το οποίο θα μπορεί να χρησιμοποιήσει τα διαθέσιμα endpoints.
+
+### Δημιουργία project
+
+Αρχικά, είτε με την χρήση του Composer είτε με την χρήση του Laravel installer δημιουργούμε ένα νέο Laravel project.
+
+> Ακολούθησε τις [οδηγίες εγκατάστασης](https://laravel.com/docs/master/installation) απο την επίσημη ιστοσελίδα του Laravel
+
+Για την δημιουργία νέου project μέσο του Laravel installer, εκτελούμε την παρακάτω εντολή:
+
+```bash noLineNumbers
+laravel new cosmetics-api
+```
+
+Εναλλακτικά με το Composer:
+
+```bash noLineNumbers
+composer create-project --prefer-dist laravel/laravel cosmetics-api
+```
+
+Ανεξάρτητα από τον τρόπο δημιουργίας του project έχει δημιουργηθεί ένας κατάλογος με όνομα `cosmetics-api` με εγκατεστημένο το Laravel και τα dependencies του.
+Μπαίνοντας σε αυτόν τον κατάλογο μπορούμε να εκτελέσουμε την εφαρμογή χρησιμοποιώντας την προεγκατεστημένη εντολή `serve` απο το πακέτο [Laravel Artisan](https://laravel.com/docs/master/artisan#introduction) όπως φαίνεται παρακάτω.
+
+```bash noLineNumbers
+cd laravel-backend-api && php artisan serve
+```
+
+Στην συνέχεια, αντιγράφουμε το αρχείο `.env.example` με σε ενα νεο με όνομα `.env`.
+```bash noLineNumbers
+cp .env.example .env
+```
+
+Τέλος, από το browser δοκιμάζουμε αν απο την διευθυνση  [http://localhost:8000](http://localhost:8000) βλέπουμε την default σελίδα ενός Laravel project.
+
+### Δημιουργία βάσης δεδομένων
+
+Τώρα που έχουμε εγκατεστημένο το Laravel, το επόμενο βήμα είναι η δημιουργία της σύνδεσης με την βάση δεδομένων. Αρχικά , δημιουργούμε μία νέα βάση δεδομένων MySql και μετά πρόσθεσε τις κατάλληλες τιμές στις παρακάτω μεταβλητές στο αρχείο `.env`. 
+
+```noLineNumbers {5,6,7}
+...
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_db_name
+DB_USERNAME=your_db_username
+DB_PASSWORD=your_db_password
+...
+```
+
+> Οδηγίες για [σύνδεση  Laravel με βάσεις δεδομένων ](https://laravel.com/docs/master/database#configuration).
+
+Εχουμε συνδέσει την βάση δεδομένων, πριν αρχίσουμε να αναπτύσσουμε το API , πρέπει να εγκαταστήσετε το Laravel Passport.
+
+### Εγκατάσταση και παραμετροποίηση του Laravel Passport
+
+To Laravel Passport παρέχει μία πλήρη υλοποίηση του [πρωτοκόλλου 0Auth2](https://oauth.net/2/) για εφαρμογές Laravel, με αυτό μπορούμε με ευκολία να παράγουμε προσωπικά διακριτικά πρόσβασης (access tokens) για την αυθεντικοποίηση (authentication) των χρηστων.
+Τα access tokens θα αποστέλλονται μαζι με κάθε αίτημα (request), επιτρέποντας στον χρήστη να έχει πρόσβαση στα προστατευμένα endpoints του API. Αρχικά, πρέπει να εγκαταστήσουμε το Passport στο project απο το Composer με την εντολή:
+
+```bash noLineNumbers noLineNumbers
+composer require laravel/passport
+```
+
+Μόλις ολοκληρωθεί η εγκατάσταση, παρατηρούμε ότι έχει δημιουργηθεί ένα νέο migration file που περιέχει τις οδηγίες για την δημιουργία του κατάλληλου σχήματος στην βάση δεδομένων που θα αποθηκεύονται τα παραγόμενα access tokes της εφαρμογής. Εκτελούμε την εντολή του artisan `migrate` για να εκτελέσουμε το migration.
+
+```bash noLineNumbers
+php artisan migrate
+```
+
+Στην συνέχεια πρέπει να δημιουργήσουμε τα απαιτούμενα κλειδιά κρυπτογράφησης (encryption keys) που χρησιμοποιεί το Passport για την δημιουργία των *access tokens*. Εκτελούμε την εντολή `passport:install` που έχει προστεθεί στις εντολές του Artisan απο το Passport.
+```bash noLineNumbers
+php artisan passport:install
+```
+Μετα απο την παραπάνω εγκατάσταση, προσθέτουμε το χαρακτηριστικό (trait) `Laravel\Passport\HasApiTokens` στο μοντέλο (model) `App\User` που βρίσκεται στο αρχείο `app/User.php
+```php {5,9} noLineNumbers
+<?php
+namespace App;
+...
+
+use Laravel\Passport\HasApiTokens;
+
+class User extends Authenticatable
+{
+   use Notifiable, HasApiTokens;
+   ...
+}
+```
+
+Με αυτό το *trait* έχουμε προσβαση στις μεθόδους του Passport που χρησιμοποιούνται απο το model `User` για τον ελεγχο των *access tokens*.
+Τώρα, πρέπει να καταχωρήσουμε τα API routes που είναι απαραίτητα για την έκδοση και ανάκληση των *access tokens*`, θα χρησιμοποιήσουμε την μέθοδο `Passport::routes()` στην μέθοδο `boot` του *AuthServiceProvider*. Στο αρχείο `app/Providers/AuthServiceProvider` τροποποιούμε τον κώδικα ως εξής:
+
+```php  {7,17,29}
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use Laravel\Passport\Passport;
+
+class AuthServiceProvider extends ServiceProvider
+{
+    /**
+     * The policy mappings for the application.
+     *
+     * @var array
+     */
+    protected $policies = [
+         'App\Model' => 'App\Policies\ModelPolicy', // uncomment
+    ];
+
+    /**
+     * Register any authentication / authorization services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->registerPolicies();
+
+        Passport::routes();
+    }
+}
+
+```
+
+Τέλος, χρησιμοποιούμε το  *TokenGuard* του Passport για authentication όλων των εισερχόμενων API requests, στο αρχείο διαμόρφωσης
+ `config/auth` ορίζουμε την επιλογή `driver` του `api` authentication guard σε `passport`, όπως παρουσιάζεται εδώ:
+
+```php noLineNumbers {13}
+<?php
+
+return [
+    ...
+
+    'guards' => [
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+            'hash' => false,
+        ],
+    ],
+
+    ...
+];
+```
+
+
+### Δημιουργία του σχήματος της βάσης δεδομένων 
+
+Σε κάθε νέα εγκατάσταση του Laravel προ-υπάρχει το μοντέλο `User` και το αρχείο migration. 
+Για να συνεχίσουμε ελεγχουμε το αρχείο `app\User.php` ότι είναι ανάλογο με το παρακάτω:
+
+```php
+<?php
+ 
+namespace App;
+ 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
+ 
+class User extends Authenticatable
+{
+    use Notifiable, HasApiTokens;
+ 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name', 'email', 'password',
+    ];
+ 
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+ 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+}
+```
+    
+Καθώς και το αρχείο `database/migrations/***_create_users_table.php`:
+
+```php
+<?php
+ 
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+ 
+class CreateUsersTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
+        });
+    }
+ 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('users');
+    }
+}
+```
+
+Με τις αλλαγές που έχουμε κάνει  στα προηγούμενα βήματα, τα  πεδία που καθορίζονται στο παραπάνω αρχείο επαρκούν για τον  ελεγχο των  credentials των χρηστων του API, επομένως δεν θα χρειαστεί καμία αλλαγη.
+ 
+Για να δημιουργήσουμε το μοντέλο `Cosmetic` χρησιμοποιούμε την εντολή ` make:model` του Artisan. Παραλληλα με την επιλογή `-m`, συντομογραφία του `--migration`, δηλώνουμε στο Artisan ότι θέλουμε και ένα το αρχείο migration για τον σχήμα Cosmetic στην βάση δεδομένων. 
+Οπότε εκτελούμε:
+
+```bash noLineNumbers
+php artisan make:model Cosmetic -m
+```
+ 
+Η παραπάνω εντολή θα δημιουργίσει στον κατάλογο `app` το αρχείο `Cosmetic.php` και στον κατάλογο `database/migrations` το αρχείο migration. 
+Ανοίγουμε το καινουριο migration αρχείο και προσθέτουμε τα παρακάτω:
+
+```php {18,19,20,21,22,23}
+<?php
+ 
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+ 
+class CreateCosmeticsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('cosmetics', function (Blueprint $table) {
+            $table->id();
+            $table->string('brand');
+            $table->string('name');
+            $table->string('type');
+            $table->text('description');
+            $table->integer('barcode');
+            $table->boolean('is_vegan');
+            $table->timestamps();
+        });
+    }
+ 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('cosmetics');
+    }
+}
+```
+ 
+Με τον παραπάνω κώδικα προσθέσαμε στο μοντέλο `Cosmetic`  τα πεδία `name`, `brand`,`type` ,`description`, `barcode` και `is_vegan`. 
+Ανοίγουμε το αρχείο `app/Cosmetic.php` και αντικαθιστούμε την ιδιότητα `$fillable` με την `$guarded`, όπως παρουσιάζεται παρακάτω: 
+ 
+ 
+```php {9}
+<?php
+ 
+namespace App;
+ 
+use Illuminate\Database\Eloquent\Model;
+ 
+class Cosmetic extends Model
+{
+    protected $guarded = [];
+}
+```
+
+Εκτελούμε ξανά την εντολή `migrate` για να ανανεώσουμε το σχήμα της βάσης δεδομένων.
+
+```bash noLineNumbers
+php artisan migrate
+````
+
+Τώρα που ανανεώθηκε το σχήμα της βάσης, θα συνεχίσουμε με την δημιουργία των controllers του API καθώς και μερικών endpoints που θα χειρίζονται την  
+εγγραφή, σύνδεση και την  διαχείριση των προϊόντων ομορφιάς, όπως εξηγήθηκε προηγουμένως.
+
+### Δημιουργία των controllers
+
+Οι controllers στο Laravel Framwork δέχονται εισερχόμενα HTTP requests και τα δρομολογούν στις κατάλληλες μεθόδους για να επεξεργαστούν και αποστείλουν το  κατάλληλο response. Όλες τα responses του API θα είναι σε [μορφή JSON](/grammatiki-json) που αποτελεί την τυπική μορφή ενός response απο ένα  [RESTful API](/ti-einai-to-rest).
+
+#### Authentication controller
+
+Με την εντολή `make:controller` του Artisan θα δημιουργήσουμε έναν controller που θα είναι υπεύθυνος για την επεξεργασία και τον χειρισμό των request για την εγγραφή και την σύνδεση των χρηστών.  
+
+```bash noLineNumbers
+php artisan make:controller API/AuthController
+```
+
+Η παραπάνω εντολή θα δημιουργήσει έναν νέο κατάλογο `API` και ένα νέο αρχείο με όνομα `AuthController.php` μεσα του, στον υπάρχον κατάλογο `app/Http/Controllers`. 
+Ανοίγουμε το `AuthController.php` και προσθέτουμε τον παρακάτω κώδικα:
+ 
+```php {3,6,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43}
+<?php
+ 
+namespace App\Http\Controllers\API;
+ 
+use App\Http\Controllers\Controller;
+use App\User;
+use Illuminate\Http\Request;
+ 
+class AuthController extends Controller
+{
+    public function register(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|max:55',
+            'email' => 'email|required|unique:users',
+            'password' => 'required|confirmed'
+        ]);
+ 
+        $validatedData['password'] = bcrypt($request->password);
+ 
+        $user = User::create($validatedData);
+ 
+        $accessToken = $user->createToken('authToken')->accessToken;
+ 
+        return response([ 'user' => $user, 'access_token' => $accessToken]);
+    }
+ 
+    public function login(Request $request)
+    {
+        $loginData = $request->validate([
+            'email' => 'email|required',
+            'password' => 'required'
+        ]);
+ 
+        if (!auth()->attempt($loginData)) {
+            return response(['message' => 'Invalid Credentials']);
+        }
+ 
+        $accessToken = auth()->user()->createToken('authToken')->accessToken;
+ 
+        return response(['user' => auth()->user(), 'access_token' => $accessToken]);
+ 
+    }
+}
+```
+
+Η μέθοδος `register` είναι υπεύθυνη για την διαδικασία εγγραφής νέων χρηστών στο API. Ακόμα, επικυρώνει και εξασφαλίζει ότι όλα τα απαιτούμενα πεδία `name`, `email`, `password` και `password_confirmation` έχουν αποσταλεί ορθά χρησιμοποιώντας την μέθοδο `validation` του Laravel. 
+
+Η μέθοδος `login` διασφαλίζει ότι έχουν αποσταλεί έγκυρα credentials  από τον χρήστη και δημιουργεί ένα *access token*, επιστρέφει τα στοιχεία του χρήστη και το *access token* σε ένα JSON response. 
+Σε αντίθετη περίπτωση ο χρήστης λαμβάνει response με μήνυμα ότι δεν έχει εξουσιοδότηση για αυτό το route.
+
+#### Cosmetic Controller
+
+Θα χρησιμοποιήσουμε την ίδια εντολή του Artisan για να δημιουργήσουμε έναν ακόμα controller, αυτή τη φορά όμως, θα χρησιμοποιήσουμε την επιλογή `--api` με την οποία δηλώνουμε στο Artisan πως επιθυμούμε να δημιουργήσει έναν *resource controller*. 
+Οι resource controllers στο Laravel είναι controllers που διαχειρίζονται όλα τα HTTP requests για ένα μοντέλο της εφαρμογής. 
+Σε αυτήν την περίπτωση θέλουμε να διαχειριστούμε requests κατάλληλα για:
+- Δημιουργία 
+- Διάβασμα
+- Επεξεργασία 
+- Διαγραφή
+
+Εκτελούμε την παρακάτω εντολή:
+
+```bash noLineNumbers
+php artisan make:controller API/CosmeticController --api --model=Cosmetic
+```
+
+Η εντολή θα δημιουργήσει το αρχείο `app/Http/Controllers/API/CosmeticController.php` με τις μεθόδους `index`, `store`, `show`, `update` και `destroy`.
+
+Ανοίγουμε το αρχείο και προσθέτουμε τον παρακάτω κώδικα:
+
+```php {3,7,20,21,22,23,24,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,69,70,71,72,84,85,86,87,88,89,101,102,103,104,105}
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Cosmetic;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\CosmeticResource;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class CosmeticController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $cosmetics = Cosmetic::all();
+        return response([  
+            'data' => CosmeticResource::collection($cosmetics), 
+            'message' => 'Retrieved successfully'
+            ], 200);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $data = $request->all();
+
+        $validator = Validator::make($data, [
+            'name' => 'required|string|max:255',
+            'brand' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+            'description' => 'required|number|max:13',
+            'barcode' => 'required'
+            'is_vegan' => 'required|boolean'
+        ]);
+
+        if($validator->fails()){
+            return response([
+                'error' => $validator->errors(), 
+                'Validation Error'
+                ]);
+        }
+
+        $cosmetic = Cosmetic::create($data);
+
+        return response([ 
+            'data' => new CosmeticResource($cosmetic), 
+            'message' => 'Created successfully'
+            ], 200);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Cosmetic  $cosmetic
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Cosmetic $cosmetic)
+    {
+        return response([ 
+            'data' => new CosmeticResource($cosmetic), 
+            'message' => 'Retrieved successfully'
+            ], 200);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Cosmetic  $cosmetic
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Cosmetic $cosmetic)
+    {
+        $cosmetic->update($request->all());
+
+        return response([ 
+            'data' => new CosmeticResource($cosmetic), 
+            'message' => 'Updated successfully'
+            ], 200);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Cosmetic  $cosmetic
+     * @return \Illuminate\Http\Response
+     * @throws \Exception
+     */
+    public function destroy(Cosmetic $cosmetic)
+    {
+        $cosmetic->delete();
+
+        return response([
+            'message' => 'Deleted'
+            ]);
+    }
+}
+```
+
+Στο παραπάνω snippet δημιουργίσαμε πέντε διαφορετικές μεθόδους που εκτελόυν ερωτήματα στην MySql βάση δεδομένων στον πίνακα `cosmetics`: 
+ 
+- `index` : Αυτή η μέθοδος διαβάζει  τις εγγραφές από τον πίνακα και τις επιστρέφει σε JSON μορφή. 
+- `store` : Λαμβάνει το στιγμιότυπο ενός HTTP request για την δημιουργία μίας νέας εγγραφής στον πίνακα, μέσω του *dependency injection* το Laravel χρησιμοποιεί το αντικείμενο `$request` για να πάρει τις πληροφορίες που στάλθηκαν, ελεγχει αν όλα τα πεδία του request είναι valid και άν είναι δημιουργεί ένα νέο στοιχείο στην λίστα και το επιστρέφει σε JSON μορφή.
+- `show` : Διαβάζει μία συγκεκριμένη εγγραφή απο τον πίνακα και την επιστρέφει σε JSON μορφή.
+- `update` : Λαμβάνει ένα HTTP request με το στιγμιοότυπο ενός cosmetic που είναι προς επεξεργασία, σαν παράμετρο (url param) και τα πεδία που είναι προς επεξεργασία. Ανανεώνει το αντικείμενο με τις νέες τιμές και επιστρέφει ένα κατάλληλο μήνημα.
+- `destroy`:  Λαμβάνει ένα HTTP request  με  παράμετρο το στιγμιοότυπο του cosmetic που είναι προς διαγραφή, και το διαγράφει απο τον πίνακα.
+
+#### Δημιουργία Resource
+
+Τα *resources* του [Laravel Eloquent](#) επιτρέπουν την μετατροπή των *models* και των *collections* σε JSON μορφή. Λειτουργούν σαν ένα επίπεδο μεταμόρφωσης των δεδομένων (data transformation layer) μεταξύ της βάσης δεδομένων και των controllers.
+Αυτό παρέχει μια ομοιομορφία στα δεδομένα των responses  και οπουδίποτε χρειαζόμαστε τα δεδομένα μας ως collection μέσα στην εφαρμογή.
+Για να δημιουργήσουμε ένα resource για το μοντέλο Cosmetic θα χρησιμοποιήσουμε την εντολή `make:resource` του Artisan, εκτελούμε την εντολή:
+
+```bash noLineNumbers
+php artisan make:resource CosmeticResource
+```
+
+Θα δημιουργηθεί ένα νέο αρχείο στον κατάλογο `app\Http\Resources` με όνομα `CosmeticResource.php` και θα περιέχει τον ακόλουθο κώδικα:
+
+```php 
+<?php
+ 
+namespace App\Http\Resources;
+ 
+use Illuminate\Http\Resources\Json\JsonResource;
+ 
+class CosmeticResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toArray($request)
+    {
+        return parent::toArray($request);
+    }
+}
+```
+
+Η μέθοδος `parent::toArray($request)` μέσα στην μέθοδο `toArray` θα μετατρέψει όλα τα διαθέσιμα γνωρίσματα (attributes)  σε JSON μορφή.
+
+> Περισσότερες πληροφορίες για τα πλεονεκτήματα που παρέχουν τα [Eloquent resources](https://laravel.com/docs/master/eloquent-resources)
+
+### Ενημέρωση του αρχείου Routes
+
+Για να ολοκληρώσουμε τις ενέργειες που απαιτούνται για την δημιουργία  API, πρέπει να ορίσουμε τα endpoints που θα αποστέλλονται τα HTTP requests. 
+Για να το κάνουμε αυτό πρέπει να προσθέσουμε τον παρακάτω κώδικα με τα απαιτούμενα routes στο αρχείο `api.php` που βρίσκεται στον κατάλογο `routes`.
+
+```php {7,8,9}
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+...
+Route::post('/register', 'Api\AuthController@register');
+Route::post('/login', 'Api\AuthController@login');
+Route::apiResource('/cosmetics', 'Api\CosmeticController')->middleware('auth:api');
+```
+
+Μπορούμε να δούμε όλα τα διαθέσιμα routes του API με την εντολή `route:list` του Artisan.
+
+```bash noLineNumbers
+php artisan route:list
+```
+
+> Όλα τα routes που δηλώνονται στο αρχείο `routes/api.php` είναι διαθέσιμα με την προθεση `/api/`.
+
+### Εκτέλεση της εφαρμογής
+
+Για να εκτελέσουμε την εφαρμογή και να ελέγξουμε τις λειτουργίες που έχουμε αναπτύξει μέχρι τώρα. Εκτελούμε την εντολή `serve`
+
+```bash noLineNumbers
+php artisan serve
+```
+Για να στείλουμε requests στο API θα χρησιμοποιήσουμε το Postman.
+
+#### Εγγραφή νέου χρήστη
+
+Για να δημιουργήσουμε έναν νέο χρήστη στο API, αποστέλλουμε ένα `POST` request στην διευθυνση  [/api/register](http://localhost:8000/api/register) προσθέτοντας στο *Body* του request το παρακάτω JSON.
+
+```json
+{
+    "name": "Margarita",
+    "email": "margarita@example.app",
+    "password": "pizza",
+    "password_confirmation": "pizza"
+}
+```
+
+#### Σύνδεση χρήστη
+
+Για να συνδεθεί ένας χρήστης πρέπει να στείλε ενα `GET` request στην διευθυνση [/api/login](http://localhost:8000/api/login) παραθέτοντας στο *Body* τα στοιχεία σύνδεσης του χρήστη. 
+
+```json
+{
+    "email": "margarita@example.app",
+    "password": "pizza"
+}
+```
+
+#### Προσθήκη *Bearer token* στα request
+
+Μετά από μία επιτυχημένη σύνδεση χρήστη, αντιγράφουμε την τιμή του `access_token` απο την απάντηση του `/login`. 
+Στο Postman στο tab ** Authorization** επιλέγουμε από την λίστα την επιλογή **Bearer Token**  και προσθέτουμε την τιμή του `access_token` που αντιγράψαμε.
+
+#### Δημιουργία ενός *cosmetic*
+ 
+Για να δημιουργήσουμε ένα νέο cosmetic στην βάση δεδομένων κάνουμε ένα `POST` request στο endpoint [/api/cosmetics](http://localhost:8000/api//api/cosmetics) παραθέτοντας το *Bearer token* και τα στοιχεία ενός cosmetic
+ 
+```json
+{
+    "name": "DOUBLE WEAR",
+    "brand": "ESTÉE LAUDER",
+    "type": "make up",
+    "description": "test description",
+    "barcode" : "5205988738",
+    "is_vegan" : true
+}
+```
+ 
+#### Λήψη της λίστας *cosmetics*
+Για να λάβουμε ολόκληρη την λίστα των cosmetic από την βάση δεδομένων, στέλνουμε ένα `GET` request στο endpoint [/api/cosmetics](http://localhost:8000/api/cosmetics)
+ 
+#### Εμφάνιση ενός *cosmetic*
+ 
+Για να διαβάσουμε τις πληροφορίες ενός συγκεκριμένου cosmetic αποστέλλουμε ενα ` GET` request στο endpoint  [api/cosmetics/1](http://localhost:8000/api/cosmetics/1). 
+Το url έχει την μορφή `api/cosmetics/{id}` το `id` αντιπροσωπεύει το id του που έχει μια εγγραφή στον πίνακα `cosmetics`
+ 
+#### Επεξεργασία ενός *cosmetic*
+ 
+Αποστέλλουμε ένα `PATCH` request στο endpoint  [api/cosmetics/1](http://localhost:8000/api/cosmetics/1) παραθέτοντας το `id` ως *url parameter* και τις πληροφορίες που θέλουμε να ανανεώσουμε στο *body* του request.
+ 
+```json {2,5,6,7}
+{
+    "name": "DOUBLE WEAR TEINT LONGUE TENUE",
+    "brand": "ESTÉE LAUDER",
+    "type": "make up",
+    "description": "Ζέστη, υγρασία, έντονη δραστηριότητα",
+    "barcode" : "5205987438",
+    "is_vegan" : false
+}
+```
+ 
+#### Διαγραφή ενός *cosmetic*
+ 
+Τέλος για την διαγραφή ενος cosmetic από την βάση δεδομένων αποστέλλουμε ένα `DELETE` request στο endpoint [`/api/cosmetics/1`](http://localhost:8000/api/cosmetics/1).
+ 
+### Συμπεράσματα
+
+Σε αυτό το μάθημα, μάθαμε πως να δημιουργήσουμε ένα ασφαλές *RESTful API* με το Laravel Framework και το πακέτο *Laravel Passport*. 
+Το παράδειγμα με τα προϊόντα περιποίησης καλύπτει την βασική λειτουργικότητα *CRUD* - *Create, Read, Update, Delete*  που χρησιμοποιείται στις περισσότερες εφαρμογές. 
