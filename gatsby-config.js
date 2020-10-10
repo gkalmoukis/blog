@@ -7,8 +7,8 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE
 module.exports = {
   siteMetadata: {
     siteTitle: `Giorgos Kalmoukis`,
-    siteTitleAlt: `Giorgos Kalmoukis Blog`,
-    siteHeadline: `Giorgos Kalmoukis Blog`,
+    siteTitleAlt: `Giorgos Kalmoukis`,
+    siteHeadline: `Giorgos Kalmoukis`,
     siteUrl: `https://blog.gkalmoukis.com`,
     siteDescription: `I'm working as Software Engineer. I admire collaboration, problem solving , open processes and those who gets things done.`,
     siteLanguage: `en`,
@@ -54,8 +54,8 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Giorgos Kalmoukis Blog`,
-        short_name: `blog-gkalmoukis`,
+        name: `Giorgos Kalmoukis`,
+        short_name: `gkalmoukis-com`,
         description: `I'm working as Software Engineer. I admire collaboration, problem solving , open processes and those who gets things done.`,
         start_url: `/`,
         background_color: `#fff`,

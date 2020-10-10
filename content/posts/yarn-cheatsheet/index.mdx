@@ -1,0 +1,78 @@
+---
+title: Yarn cheatsheet
+date: 2020-10-10
+tags: 
+  - Node.js
+  - Yarn
+slug: "/yarn-cheatsheet"
+---
+
+
+## Installing Yarn 
+
+> Installation proccess for Ubuntu 20.04
+
+### Install Yarn
+
+#### Import the repository’s GPG  and APT repository to your system
+```bash
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+```
+
+#### Update and install Yarn package
+```bash
+sudo apt update
+sudo apt install yarn
+```
+
+You skip the Node.js installation with
+```bash
+sudo apt install --no-install-recommends yarn
+```
+
+print the Yarn version
+```bash
+yarn --version
+```
+
+### Using Yarn
+
+#### Create a new project
+
+```bash
+mkdir ~/new-app && cd ~/new-app
+yarn init new-app
+```
+
+#### Add dependency
+```bash
+yarn add [package_name]
+yarn add [package_name]@[version_or_tag]
+```
+
+#### Upgrade dependency
+
+```bash
+yarn upgrade //this will upgrade all dependencies
+yarn upgrade [package_name]
+yarn upgrade [package_name]@[version_or_tag]
+```
+
+#### Removing dependency 
+```bash
+yarn remove [package_name]
+```
+
+#### Installing all project dependencies
+```bash
+yarn
+```
+or
+
+```bash
+yarn install
+```
+
+
+> Visit [Yarn documentation](https://classic.yarnpkg.com/en/docs) page.
