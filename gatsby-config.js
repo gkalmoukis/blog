@@ -9,7 +9,7 @@ module.exports = {
     siteTitle: `Giorgos Kalmoukis`,
     siteTitleAlt: `Giorgos Kalmoukis`,
     siteHeadline: `Giorgos Kalmoukis`,
-    siteUrl: `https://blog.gkalmoukis.com`,
+    siteUrl: `https://gkalmoukis.com`,
     siteDescription: `I'm working as Software Engineer. I admire collaboration, problem solving , open processes and those who gets things done.`,
     siteLanguage: `en`,
     siteImage: `.static/banner.jpg`,
