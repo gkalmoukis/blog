@@ -1,0 +1,91 @@
+---
+title: Cool git commands
+date: 2020-11-27
+tags:
+  - Git
+slug: "/cool-git-commands"
+---
+
+This page contains a list of Git commands I find handy to know but hard to remember
+
+#### Squash a series of commits and rewrite the history by writing them as one
+
+```
+git rebase -i
+```
+
+this gives you an interactive rebasing tool.
+
+Type `s` to apply squash to a commit with the previous one. Repeat the `s` as many times you need.
+
+#### Take a commit that lives in a separate branch and apply the same changes on the current branch
+
+single commit:
+
+```
+git cherry-pick <commit>
+```
+
+for multiple commits:
+
+```
+git cherry-pick <commit1> <commit2> <commit3>
+```
+
+#### Restore the status of a file to the last commit (revert changes)
+```
+git checkout -- <filename>
+```
+
+#### Show a graph of the commit history
+```
+git log --pretty=format:"%h %s" --graph
+```
+
+#### Get a more compact log
+```
+git log --pretty=format:"%h - %an, %ar : %s"
+```
+#### Get a shorter status
+```
+git status -s
+```
+#### Checkout a pull request locally
+```
+git fetch origin pull/<id>/head:<branch>
+git checkout <branch>
+```
+
+#### List the commits that involve a specific file
+```
+git log --follow -- <filename>
+```
+
+#### List the commits that involve a specific file, including the commits content
+```
+git log --follow -p -- <filename>
+```
+
+#### List the repository contributors ordering by the number of commits
+```
+git shortlog -s -n
+```
+
+#### Undo the last commit you pushed to the remote
+```
+git revert -n HEAD
+```
+
+#### Pick every change you haven’t already committed and create a new branch
+```
+git checkout -b <branch>
+```
+#### Stop tracking a file, but keep it in the file system
+```
+git rm -r --cached
+```
+#### Get the name of the branch where a specific commit was made
+
+```
+git branch --contains <commit>
+```
