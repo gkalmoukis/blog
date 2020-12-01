@@ -1,0 +1,240 @@
+---
+title: Δημιουργία Discord bot με το Discord.js
+date: 2020-12-01
+tags:
+  - Ελληνικά
+  - Tutorials
+  - chat-bot
+  - Node.js
+  - Discord.js
+slug: "/dimiourgia-discord-bot-me-to-discord-js"
+---
+
+Σημερα το [Discord](https://discord.com/) είναι ένα από τα πιο δημοφιλή chat applications, 
+ειδικά σε gamers και προγραμματιστές.Ένα από τα καλύτερα χαρακτηριστικά του είναι ότι μπορεί ο καθένας να δημιουργήσει **discord chat bots** με σκοπό να το κάνει πιο διαδραστικό, 
+ανάλογα με τις δικές του ανάγκες. 
+
+Ως προγραμματιστής, 
+αναρωτιόμουν πως μπορώ να δημιουργήσω ένα Discord Bot. 
+Πώς μπορώ να αναπτύξω τις δικες μου εντολές; 
+Πως να ακούω σε μηνύματα μέσα στον Server; 
+Από ότι ανακάλυψα είναι πιο ευκολο απο οσο πιστευα. Οπότε, ας δούμε πως μπορούμε να αναπτύξουμε ένα Discord Bot χρησιμοποιώντας το [Discord.js](https://discord.js.org/) 
+
+### Συνοπτικά
+
+Για αυτό το tutorial, 
+θα χρειαστούμε να έχουμε εγκατεστημένο το [Node.js](https://nodejs.org/) και το [npm](https://www.npmjs.com/) ή το [yarn](https://yarnpkg.com/).
+
+> Εδω θα βρείς ένα σύντομο [yarn cheatsheet](https://gkalmoukis.com/yarn-cheatsheet). 
+
+Συνοπτικά, θα πρέπει να κάνουμε τα παρακάτω:
+
+- Δημιουργία του project
+- Δημιουργία ενος Discord app έτσι ώστε να λάβουμε ένα *token* για να χρησιμοποιήσουμε το *Discord API*.
+- Δημιουργία ενός δοκιμαστικού Discord Server οπου θα εγκαταστήσουμε αρχικά το bot
+- Δοκιμή του bot.
+
+### Δημιουργία του project
+
+Αρχικά, θα πρέπει να δημιουργήσουμε ένα φάκελο και να αρχικοποιήσουμε το `package.json`.
+
+```bash
+mkdir discord-bot
+cd discord-bot
+npm init -y
+```
+
+Έπειτα θα πρέπει να εισάγουμε ένα Node πακέτο το οποίο θα μας παρέχει τις κατάλληλες μεθόδους για να αλληλεπιδράσουμε με το Discord API, το discord.js. 
+Το προσθέτουμε στο project εκτελώντας την εντολή
+
+```bash
+npm install discord.js
+```
+
+Απο τον ιστότοπο του discord.js παρέχεται ένας αρχικός κώδικας που θα μας βοηθήσει να αρχίσουμε. Στον φάκελο `discord-bot` δημιουργούμε ένα αρχείο `index.js`.
+
+```bash
+touch index.js
+```
+
+Και προσθέτουμε τον αρχικό κωδικα που βρήκαμε στο site.
+
+```js
+const Discord = require('discord.js');
+const client = new Discord.Client();
+
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user.tag}!`);
+});
+
+client.on('message', msg => {
+  if (msg.content === 'ping') {
+    msg.reply('Pong!');
+  }
+});
+
+client.login('token');
+```
+
+Με τον παραπάνω κώδικα
+- Εισάγουμε το πακέτο discord.js και το αρχικοποιούμε καλώντας την μέθοδο `Client()` 
+- Στη συνέχεια “ακούμε” για κάποια συμβάντα, `ready` και `message` μέσω της μεθόδου `on` ορίζοντας πώς να χειριστούμε αυτά τα συμβάντα με μια *callback function*.
+- Στο τέλος του κωδικα, καλούμε τη μέθοδο login δημιουργώντας μια *σύνδεση websocket* με το Discord. Όμως, όπως μπορείτε να δείτε, πρέπει να δώσουμε ένα *access token* σε αυτήν τη μέθοδο. Το *access token* απαιτείται απο το Discord  για να χρησιμοποιήσουμε το API.
+
+### Δημιουργία Application και access token
+
+Στον ιστότοπο [Discord Developer Portal](https://discord.com/developers/applications) επιλέγουμε *New Application* και εισάγουμε το όνομα του νέου application.
+
+Στο sidebar στα αριστερά, επιλέγουμε το *Bot* και μετά το *Add Bot*. 
+Στο pop-up που θα εμφανιστεί επιλέγουμε **Yes, do it!**. 
+Εάν δεν υπάρξει κάποιο πρόβλημα θα εμφανιστεί το μήνυμα **A wild bot has appeared!**
+
+
+Κάτω από το *Token*, επιλέγουμε *Copy* και το προσθέτουμε στο `index.js` ως παράμετρο στην μέθοδο `login()`.
+
+```js {14}
+const Discord = require('discord.js');
+const client = new Discord.Client();
+
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user.tag}!`);
+});
+
+client.on('message', msg => {
+  if (msg.content === 'ping') {
+    msg.reply('Pong!');
+  }
+});
+
+client.login('token_here');
+```
+
+Μέχρι τώρα έχουμε ολοκληρώσει την δημιουργία του project και την παραγωγή ενός *access token* για το Discord API. 
+Μένει να το προσθέσουμε σε κάποιον Discord Server και να το δοκιμάσουμε.
+
+### Δημιουργία Server
+
+Τώρα πρέπει να προσθέσουμε το bot στον σε έναν Server. 
+Αν δεν έχετε κάποιον server διαθέσιμο, θα πρέπει να δημιουργήσετε έναν.
+
+Επιστρέφουμε στο Discord Developer Portal και απο το sidebar στα αριστερά πηγαίνουμε στο OAuth2. 
+Στο panel *Scopes* επιλέγουμε την επιλογή bot και αντιγράψτε το *url* που δημιουργήθηκε, ανοίγουμε το url σε ένα νέο παράθυρο και επιλέγουμε *Authorise*.
+
+### Εκτέλεση 
+
+Μετά το authorization παρατηρούμε ότι το νέο bot έχει προστεθεί στην λίστα μελών του server μας και οτι είναι offline. 
+Στην διαδικασία της ανάπτυξης θα χρησιμοποιήσουμε το *npm* πακέτο nodemon(https://nodemon.io/), το οποίο με την σειρά του θα ανανεώνει τον κωδικα σε κάθε αλλαγή, 
+χωρίς να απαιτείται απο εμας να εκτελέσουμε εκ νεου την εφαρμογή.
+
+Για την εγκατάσταση του πακέτου εκτελούμε την παρακάτω εντολή 
+
+```bash
+npm install nodemon --save-dev
+```
+
+Έπειτα θα προσθέσουμε στο package.json στο πεδίο scripts δύο ακόμα εγγραφές μία που θα ονομάζεται start και μία άλλη dev, όπως παρουσιάζεται παρακάτω.
+```json {8,9}
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "description": "Simple discord bot for tutorial purposes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
+```
+
+Η βασική εγκατάσταση είναι έτοιμη, εκτελούμε το bot με την παρακάτω εντολή.
+
+```bash
+npm run dev
+```
+
+Αν όλα έχουν πάει καλά έχουμε το παρακάτω output.
+
+```bash noLineNumbers {9}
+> discord-bot@1.0.0 dev /home/gkal/bots/discord-bot
+> nodemon index.js
+
+[nodemon] 2.0.6
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `node index.js`
+Logged in as <your-bot-name>!
+```
+
+Για να δοκιμάσουμε αν το bot αλληλεπιδρά με το Discord, επιστρέφουμε στο Discord και στέλνουμε ένα νέο μήνυμα **ping** στο general channel, το bot θα απαντήσει **pong**. 
+Πολύ Cool! 
+
+### Αποκρυψη του access token
+
+Όπως παρατηρείτε το *access token* στην σελίδα από όπου το αντιγράψαμε ήταν κρυμμένο. 
+Αυτο γιατί το access token αποτελει ευαισθητο δεδομενο με αυτό μπορούμε να κάνουμε τα πάντα στο bot. 
+Αυτό έχει ως αποτέλεσμα να πρέπει να το κρύψουμε απο τον πηγαίο κώδικα που θα ανεβάσουμε στο repository του project. 
+
+Για την απόκρυψη δεδομένων, 
+χρησιμοποιούμε αυτό που ονομάζουμε *environment variables*. 
+Βασικά, βάζουμε τις μεταβλητές που θέλουμε να κρύψουμε σε ένα αρχείο με όνομα `.env`. 
+Αυτό το αρχείο δεν θα πρέπει ποτέ να προστεθεί σε δημόσιο repository εάν περιέχει ευαίσθητα δεδομένα. 
+Δημιουργήστε ένα νέο αρχείο που ονομάζεται `.env` και επικολλήστε τα εξής:
+
+```
+BOT_TOKEN=YOUR_BOT_TOKEN
+```
+
+Αντικαθιστούμε το `YOUR_BOT_TOKEN` το πραγματικο μας *access token*.
+
+Για αυτόν τον σκοπό, θα προσθέσουμε ένα πακέτο που ονομάζεται [dotenv](https://github.com/motdotla/dotenv).
+Το επόμενο βήμα είναι να εισάγουμε της μεταβλητή `BOT_TOKEN` στο αρχείο `index.js`. 
+Για αυτό, θα προσθέσουμε ένα npm πακέτο που ονομάζεται dotenv. 
+Με αυτό το πακέτο οι μεταβλητές που υπάρχουν στο `.env` αρχείο θα φορτωθούν στο `process.env`
+
+Εκτελούμε την παρακάτω εντολή για να εγκαταστήσουμε το πακετο 
+```bash
+npm install dotenv
+```
+
+Και τροποποιούμε το αρχείο `index.js` ως εξής
+```js {1,15}
+require("dotenv").config()
+const Discord = require("discord.js")
+const client = new Discord.Client()
+
+client.on("ready", () => {
+  console.log(`Logged in as ${client.user.tag}!`)
+})
+
+client.on("message", (msg) => {
+  if (msg.content === "ping") {
+    msg.reply("Pong!")
+  }
+})
+
+client.login(process.env.BOT_TOKEN)
+```
+
+Επιστρέφουμε στο Discord και παρατηρούμε οτι το bot εξακολουθεί να είναι ενεργό. 
+
+
+Μπορείτε να κάνετε πολλά πράγματα με ένα Discord Chat Bot, όπως διαχείριση τών δικαιωμάτων των χρηστών, χρήση REST APIs όπως Google APIs, Unsplash και άλλα, αναπαραγωγή μουσικής, αναζήτηση GIFS και πολλά άλλα. 
+
+Καλή διασκέδαση!
+
+
+
+
+
+
+
