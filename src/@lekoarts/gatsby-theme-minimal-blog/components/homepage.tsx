@@ -29,24 +29,8 @@ type PostsProps = {
   }[]
 }
 
-type RepositoriesProps = {
-  repositories : {
-    name : string
-    description : string
-    url : string
-    forkCount : {
-      totalCount : number
-    }
-  }[]
-}
-
 const Homepage = ({ posts }: PostsProps) => {
   const { basePath, blogPath } = useMinimalBlogConfig()
-
-
-
-
-
   return (
 
     <Layout>
@@ -58,11 +42,10 @@ const Homepage = ({ posts }: PostsProps) => {
       </Title>
 
       <Listing posts={posts} showTags={true} />
-
+      
 
     </Layout>
   )
 }
-  
 
 export default Homepage

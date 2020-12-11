@@ -29,6 +29,10 @@ module.exports = {
             title: `About`,
             slug: `/about`,
           },
+          {
+            title: `Hire me`,
+            slug: `/hire-me`,
+          },
         ],
         externalLinks: [
           {

@@ -23,6 +23,7 @@ const Footer = () => {
       <div>
       {new Date().getFullYear()} &copy;  All rights reserved.
       </div>
+
       <div>
        Created by
         {` `}
