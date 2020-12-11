@@ -24,6 +24,10 @@ Besides that, I contribute to open source projects regularly. If you like my wor
 
 <Box
   as='form'
+  id='hire-me-form'
+     data-netlify="true"
+    data-netlify-recaptcha="true"
+    name="hire-me"
   onSubmit={e => {
       e.preventDefault()
       let myForm = document.getElementById('hire-me-form');
@@ -36,11 +40,7 @@ Besides that, I contribute to open source projects regularly. If you like my wor
             alert(error))
       
     }}>
-<form 
-    id='hire-me-form'
-     data-netlify="true"
-    data-netlify-recaptcha="true"
-    name="hire-me">
+
   <Label htmlFor='name'>Name</Label>
   <Input
     name='name'
@@ -85,5 +85,4 @@ Besides that, I contribute to open source projects regularly. If you like my wor
   />
   
     <Button variant='primary'>Boop</Button>
-</form>
 </Box>
