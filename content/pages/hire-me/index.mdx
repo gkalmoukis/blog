@@ -28,18 +28,7 @@ Besides that, I contribute to open source projects regularly. If you like my wor
      data-netlify="true"
     data-netlify-recaptcha="true"
     name="hire-me"
-  onSubmit={e => {
-      e.preventDefault()
-      let myForm = document.getElementById('hire-me-form');
-        let formData = new FormData(myForm)
-        fetch('/', {
-            method: 'POST',
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams(formData).toString()
-        }).then(() => console.log('Form successfully submitted')).catch((error) =>
-            alert(error))
-      
-    }}>
+  >
 
   <Label htmlFor='name'>Name</Label>
   <Input
