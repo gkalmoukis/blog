@@ -29,7 +29,7 @@ const Header = () => {
           variant: `dividers.bottom`,
           alignItems: `center`,
           justifyContent: `space-between`,
-          mt: 3,
+          mt: 1,
           color: `secondary`,
           a: { color: `secondary`, ":hover": { color: `heading` } },
           flexFlow: `wrap`,
