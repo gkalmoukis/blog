@@ -1,0 +1,111 @@
+---
+title: Laravel Filters
+date: 2021-04-20
+tags:
+  - PHP
+  - Laravel
+  - Eloquent
+slug: "/laravel-filters"
+---
+
+This package allows you to build filters easily, with *Eloquent* queries based on a request. 
+
+### Installing
+
+You can install the package via composer
+
+```
+composer require gkalmoukis/laravel-filters
+```
+The package will automatically register the service provider.
+
+### Usage
+
+#### Create a new filter
+
+Use the `make:filter` command to generate new filters.
+
+```bash noLineNumbers
+php artisan make:filter [FilterName] --model=[YourModel]
+```
+
+In `handle()` method in `app/Filters/[Filters]/[FilterName].php` you can write Eloquent queries with the filtering logic. 
+The name of the class will be used as query parameter in the request. 
+
+
+The filter query parameters can be used to add *where* clauses to your Eloquent query. 
+Out of the box this package supports filtering results by partial attribute value, exact attribute value or even. 
+For more advanced cases, you can create and use  custom filters in combination.
+
+```php:title=app/Filters/YourModel/FilterName.php {18}
+<?php
+
+namespace App\Filters\User;
+
+use Gkalmoukis\LaravelFilters\FilterInterface;
+
+class FilterName implements FilterInterface
+{
+  protected $query;
+
+  public function __construct($query)
+  {
+    $this->query = $query;
+  }
+
+  public function handle($value): void
+  {
+    $this->query->where('column', '=', $value); 
+  }
+}
+```
+
+#### Add Trait to the model
+
+Use the `FilterByTrait` in the model.
+
+```php:title=app/Models/YourModel.php {6,10}
+<?php
+
+namespace App\Models;
+
+...
+use Gkalmoukis\LaravelFilters\Traits\FilterByTrait;
+
+class YourModel extends Model
+{
+  use HasFactory, FilterByTrait;
+}
+```
+
+#### Query Parameteres
+
+Add filter class name as query params in your URL written in *camel case* style.  
+
+> ?filterName=some+value 
+
+#### Filter results in controller
+
+In your controller get the query params from the `request()` helper function and fitler an Eloquent instance.
+
+```php:title=app/Http/Conteollers/ExampleController.php {13}
+<?php
+
+namespace App\Http\Controllers;
+
+...
+use App\Models\YourModel;
+
+class ExampleController extends Controller
+{
+  ...
+  public function index()
+  {
+    return YourModel::filterBy( request()->all() )->get();
+  }
+  ...
+}
+```
+
+
+🙏
