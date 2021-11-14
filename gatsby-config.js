@@ -30,6 +30,10 @@ module.exports = {
             slug: `/about`,
           },
           {
+            title: `Tags`,
+            slug: `/tags`,
+          },
+          {
             title: `Hire me`,
             slug: `/hire-me`,
           },
