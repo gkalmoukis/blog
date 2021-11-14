@@ -12,7 +12,7 @@ module.exports = {
     siteUrl: `https://gkalmoukis.com`,
     siteDescription: `I'm working as Software Engineer. I admire collaboration, problem solving , open processes and those who gets things done.`,
     siteLanguage: `en`,
-    siteImage: `.static/banner.jpg`,
+    siteImage: `/banner.jpg`,
     author: `@gkalmoukis`
   },
   plugins: [
