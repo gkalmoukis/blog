@@ -28,7 +28,7 @@
     "gatsby-plugin-webpack-bundle-analyser-v2": "^1.1.10",
     "gatsby-remark-copy-linked-files": "^2.5.0",
     "gatsby-source-github-api": "^0.2.1",
-    "gatsby-transformer-remark": "^2.11.1",
+    "gatsby-transformer-remark": "^5.25.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-typography": "^0.16.19",
